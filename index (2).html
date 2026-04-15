@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ethan Phan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=Geist+Mono:wght@300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:   #f5f2ec;
+      --ink:     #1a1714;
+      --mid:     #6b6560;
+      --light:   #ddd8d0;
+      --accent:  #2a4a3e;
+      --warm:    #c8522a;
+      --mono:    'Geist Mono', monospace;
+      --serif:   'Sora', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.7;
+      cursor: none;
+    }
+
+    .cursor {
+      width: 8px; height: 8px;
+      background: var(--ink);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease, background 0.2s;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      width: 32px; height: 32px;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transition: transform 0.35s ease, width 0.2s, height 0.2s, opacity 0.2s;
+      transform: translate(-50%, -50%);
+      opacity: 0.4;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 48px;
+      background: var(--cream);
+      border-bottom: 1px solid var(--light);
+    }
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 300;
+      letter-spacing: -0.5px;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      color: var(--mid);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg-text {
+      position: absolute;
+      top: 50%;
+      left: 48px;
+      transform: translateY(-50%);
+      font-family: var(--serif);
+      font-size: clamp(80px, 15vw, 220px);
+      font-weight: 600;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--light);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      line-height: 1;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 680px; }
+    .hero-tag {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--warm);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+    .hero-name {
+      font-family: var(--serif);
+      font-size: clamp(48px, 7vw, 88px);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      color: var(--ink);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+    }
+    .hero-name em { font-style: normal; color: var(--accent); font-weight: 500; }
+    .hero-desc {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.8;
+      max-width: 480px;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.6s forwards;
+    }
+    .hero-cta { display: flex; gap: 16px; opacity: 0; animation: fadeUp 0.8s ease 0.8s forwards; }
+    .btn-primary {
+      background: var(--ink); color: var(--cream);
+      padding: 12px 28px; font-family: var(--mono);
+      font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+      text-decoration: none; border: 1px solid var(--ink);
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
+    .btn-ghost {
+      background: transparent; color: var(--ink);
+      padding: 12px 28px; font-family: var(--mono);
+      font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+      text-decoration: none; border: 1px solid var(--light);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--ink); }
+    .hero-scroll {
+      position: absolute; bottom: 40px; right: 48px;
+      writing-mode: vertical-rl; font-size: 10px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--mid); opacity: 0;
+      animation: fadeIn 1s ease 1.2s forwards;
+    }
+    .hero-scroll::before {
+      content: ''; display: block; width: 1px; height: 48px;
+      background: var(--light); margin: 0 auto 12px;
+    }
+
+    section { padding: 100px 48px; }
+    .section-label {
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--warm); margin-bottom: 48px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-label::after { content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--warm); }
+
+    #about { border-top: 1px solid var(--light); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .about-headline {
+      font-family: var(--serif); font-size: clamp(32px, 4vw, 52px);
+      font-weight: 300; line-height: 1.1; letter-spacing: -1.5px; color: var(--ink);
+    }
+    .about-headline em { font-style: normal; color: var(--accent); font-weight: 500; }
+    .about-body { color: var(--mid); line-height: 1.9; font-size: 13px; }
+    .about-body p + p { margin-top: 16px; }
+    .about-stats {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: var(--light); margin-top: 48px; border: 1px solid var(--light);
+    }
+    .stat { background: var(--cream); padding: 24px; }
+    .stat-value { font-family: var(--serif); font-size: 36px; font-weight: 300; color: var(--ink); line-height: 1; }
+    .stat-label { font-size: 11px; color: var(--mid); margin-top: 6px; letter-spacing: 0.5px; }
+
+    #projects { border-top: 1px solid var(--light); background: var(--ink); }
+    #projects .section-label { color: #c8a882; }
+    #projects .section-label::after { background: #c8a882; }
+    .projects-intro {
+      font-family: var(--serif); font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 300; color: var(--cream); margin-bottom: 64px;
+      max-width: 600px; line-height: 1.2; letter-spacing: -1px;
+    }
+    .project-list { display: flex; flex-direction: column; }
+    .project-item {
+      display: grid; grid-template-columns: 48px 1fr auto;
+      gap: 32px; align-items: start;
+      padding: 36px 0; border-top: 1px solid #2e2b27;
+      text-decoration: none; position: relative;
+    }
+    .project-item:last-child { border-bottom: 1px solid #2e2b27; }
+    .project-item:hover .project-arrow { transform: translate(4px, -4px); color: #c8a882; }
+    .project-num { font-size: 11px; color: #5a5550; padding-top: 4px; letter-spacing: 1px; }
+    .project-title {
+      font-family: var(--serif); font-size: 22px; font-weight: 300;
+      color: var(--cream); margin-bottom: 8px; letter-spacing: -0.5px;
+    }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .tag {
+      font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+      color: #8a8480; border: 1px solid #3a3530; padding: 3px 10px;
+    }
+    .project-desc { font-size: 13px; color: #8a8480; line-height: 1.7; max-width: 560px; }
+    .project-arrow { font-size: 20px; color: #5a5550; padding-top: 4px; transition: transform 0.2s, color 0.2s; }
+    .project-highlight {
+      display: inline-block; margin-top: 12px;
+      font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #c8a882;
+    }
+
+    #skills { border-top: 1px solid var(--light); }
+    .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+    .skill-group-title { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--warm); margin-bottom: 20px; }
+    .skill-items { display: flex; flex-direction: column; gap: 10px; }
+    .skill-item { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--ink); }
+    .skill-item::before { content: ''; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+
+    footer {
+      border-top: 1px solid var(--light); padding: 40px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-name { font-family: var(--serif); font-size: 16px; font-weight: 300; color: var(--mid); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a {
+      font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--mid); text-decoration: none; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--ink); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 0.6; }
+    }
+
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      section { padding: 64px 24px; }
+      #hero { padding: 0 24px 64px; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      .skills-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .project-item { grid-template-columns: 32px 1fr; }
+      .project-arrow { display: none; }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav>
+    <a href="#hero" class="nav-logo">Ethan Phan</a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="mailto:ethan.phan1230@gmail.com">Contact</a>
+    </div>
+  </nav>
+
+  <section id="hero">
+    <div class="hero-bg-text">Ethan</div>
+    <div class="hero-content">
+      <p class="hero-tag">Available for graduate roles — Sydney, AU</p>
+      <h1 class="hero-name">CS Graduate.<br><em>Data & technology</em><br>focused.</h1>
+      <p class="hero-desc">
+        UNSW Computer Science graduate with hands-on experience in data analytics,
+        performance marketing, and full-stack development. I work at the intersection
+        of technology and business outcomes.
+      </p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn-primary">View work</a>
+        <a href="mailto:ethan.phan1230@gmail.com" class="btn-ghost">Get in touch</a>
+      </div>
+    </div>
+    <span class="hero-scroll">Scroll</span>
+  </section>
+
+  <section id="about">
+    <p class="section-label">About</p>
+    <div class="about-grid">
+      <div>
+        <h2 class="about-headline reveal">Comfortable where <em>technology</em> meets business.</h2>
+        <div class="about-stats reveal">
+          <div class="stat"><div class="stat-value">3+</div><div class="stat-label">Years at City Optics</div></div>
+          <div class="stat"><div class="stat-value">$50k+</div><div class="stat-label">Ad spend managed</div></div>
+          <div class="stat"><div class="stat-value">$200k+</div><div class="stat-label">Client value generated</div></div>
+          <div class="stat"><div class="stat-value">2025</div><div class="stat-label">UNSW CS Graduate</div></div>
+        </div>
+      </div>
+      <div class="about-body reveal">
+        <p>I'm a Computer Science graduate from UNSW with a background that spans software development, data analytics, and performance marketing. I've spent the last few years running Meta Ads campaigns for optical retail clients — managing real budgets, real clients, and real outcomes.</p>
+        <p>I'm drawn to roles in data analytics and technology consulting where I can apply both technical skills and commercial thinking. I'm comfortable working independently, communicating findings to non-technical stakeholders, and owning outcomes end to end.</p>
+        <p>Currently targeting graduate roles at firms including PwC, EY, NAB, Telstra, and RSM.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <p class="section-label">Projects</p>
+    <p class="projects-intro reveal">Selected work across data, marketing, and software.</p>
+    <div class="project-list">
+
+      <a href="YOUR_STREAMLIT_URL_HERE" target="_blank" class="project-item reveal">
+        <span class="project-num">01</span>
+        <div class="project-info">
+          <h3 class="project-title">Job Salary Bracket Predictor</h3>
+          <div class="project-tags">
+            <span class="tag">Python</span><span class="tag">XGBoost</span>
+            <span class="tag">NLP</span><span class="tag">SHAP</span><span class="tag">Streamlit</span>
+          </div>
+          <p class="project-desc">Analysed 35,000 US LinkedIn job postings to identify which skills, keywords, and role characteristics are most strongly associated with higher compensation brackets. Built an XGBoost classifier on TF-IDF features with SHAP interpretation to surface non-obvious salary signals across Tech, Healthcare, and Business industries.</p>
+          <span class="project-highlight">↗ Live demo</span>
+        </div>
+        <span class="project-arrow">↗</span>
+      </a>
+
+      <div class="project-item reveal" style="cursor:default; grid-template-columns: 48px 1fr;">
+        <span class="project-num">02</span>
+        <div class="project-info">
+          <h3 class="project-title">StudyBetta</h3>
+          <div class="project-tags">
+            <span class="tag">React.js</span><span class="tag">React Native</span>
+            <span class="tag">Supabase</span><span class="tag">PostgreSQL</span>
+          </div>
+          <p class="project-desc">Full-stack study web application to help students organise and manage their learning workflow. Features a Pomodoro timer, task management, and session tracking built with React and a Supabase backend.</p>
+          <video src="studybetta-demo.mp4" controls style="width:100%; max-width:720px; margin-top:20px; border:1px solid #2e2b27; display:block;"></video>
+        </div>
+      </div>
+
+      <div class="project-item reveal" style="cursor:default">
+        <span class="project-num">03</span>
+        <div class="project-info">
+          <h3 class="project-title">CollabMate</h3>
+          <div class="project-tags">
+            <span class="tag">React.js</span><span class="tag">Node.js</span>
+            <span class="tag">Supabase</span><span class="tag">REST API</span>
+          </div>
+          <p class="project-desc">Collaborative web application designed to help students manage group work — conceptually similar to Jira but tailored for academic use cases. Built with a React frontend, Node.js backend, and Supabase for real-time data.</p>
+          <a href="collabmate-writeup.pdf" target="_blank" class="project-highlight" style="margin-top:14px; display:inline-block; border:1px solid #3a3530; padding:6px 16px; text-decoration:none;">↓ Read write-up</a>
+        </div>
+        <span class="project-arrow" style="opacity:0">↗</span>
+      </div>
+
+      <div class="project-item reveal" style="cursor:default">
+        <span class="project-num">04</span>
+        <div class="project-info">
+          <h3 class="project-title">City Optics — Meta Ads Analytics</h3>
+          <div class="project-tags">
+            <span class="tag">Python</span><span class="tag">pandas</span>
+            <span class="tag">Power BI</span><span class="tag">Meta Ads API</span>
+          </div>
+          <p class="project-desc">End-to-end analysis pipeline across 12 months of Meta Ads campaign data for City Optics (Wetherill Park and Penrith). Built a multi-page Power BI dashboard tracking CPL performance, creative fatigue, and audience segment trends. Managed $50,000+ in ad spend contributing to $200,000+ in client value.</p>
+          <span style="display:inline-block; margin-top:12px; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:#5a5550;">Dashboard available on request</span>
+        </div>
+        <span class="project-arrow" style="opacity:0">↗</span>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="skills">
+    <p class="section-label">Skills</p>
+    <div class="skills-grid">
+      <div class="reveal">
+        <p class="skill-group-title">Data & Analytics</p>
+        <div class="skill-items">
+          <span class="skill-item">Python (pandas, scikit-learn, XGBoost)</span>
+          <span class="skill-item">SQL (PostgreSQL / Supabase)</span>
+          <span class="skill-item">Power BI</span>
+          <span class="skill-item">SHAP / Model Interpretation</span>
+          <span class="skill-item">NLP / TF-IDF</span>
+        </div>
+      </div>
+      <div class="reveal">
+        <p class="skill-group-title">Software Development</p>
+        <div class="skill-items">
+          <span class="skill-item">React.js / React Native</span>
+          <span class="skill-item">Node.js</span>
+          <span class="skill-item">JavaScript</span>
+          <span class="skill-item">REST APIs</span>
+          <span class="skill-item">Git & GitHub</span>
+        </div>
+      </div>
+      <div class="reveal">
+        <p class="skill-group-title">Marketing & Business</p>
+        <div class="skill-items">
+          <span class="skill-item">Meta Ads Manager</span>
+          <span class="skill-item">Performance Analysis (CTR, CPA, CPL)</span>
+          <span class="skill-item">Lead Generation Strategy</span>
+          <span class="skill-item">Client Communication</span>
+          <span class="skill-item">Commercial Proposal Writing</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="footer-name">Ethan Phan</span>
+    <div class="footer-links">
+      <a href="mailto:ethan.phan1230@gmail.com">Email</a>
+      <a href="https://github.com/eplup21" target="_blank">GitHub</a>
+      <a href="tel:0436318965">0436 318 965</a>
+    </div>
+  </footer>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';
+        ring.style.opacity = '0.15';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+        ring.style.opacity = '0.4';
+      });
+    });
+
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
